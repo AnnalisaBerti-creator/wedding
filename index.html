@@ -1,0 +1,96 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SVG with D3 – Bezos Wedding</title>
+
+    <!-- CSS base e personalizzato (opzionali) -->
+    <link rel="stylesheet" href="base.css" />
+    <link rel="stylesheet" href="custom.css" />
+
+    <!-- ✅ D3.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+  </head>
+
+  <body>
+
+    <h1>How Much Did Bezos' Wedding Really Cost?</h1>
+
+    <p>
+      Jeff Bezos’ net worth was around <strong>$236 billion</strong>.  
+      The cost of the nuptials was estimated between <strong>$47 million and $56 million</strong> (Reuters).
+    </p>
+    <p>
+      The average net worth of an American family is <strong>$1,063,700</strong> (U.S. Federal Reserve).  
+      The average wedding cost in 2024 for Americans was <strong>$33,000</strong> (Fidelity).
+    </p>
+
+    <p>
+      Bezos: $236 billion / $56 million = <strong>4,214×</strong><br />
+      Average American: $1,063,700 / $33,000 = <strong>32×</strong>
+    </p>
+
+    <!-- Contenitore del grafico -->
+    <div id="my-svg-chart"></div>
+
+    <script>
+      // Step 3. Dati (in milioni)
+      const bezosWealth = 236000;     // 236 miliardi
+      const bezosCost = 56;           // 56 milioni
+      const averageWealth = 1.0637;   // 1,063,700
+      const averageCost = 0.033;      // 33,000
+
+      // Step 4. Scala dei raggi (per la ricchezza)
+      const scaleRadius = d3.scaleSqrt()
+        .domain([0, bezosWealth])
+        .range([0, 100]);
+
+      // Step 5. Crea il contenitore SVG
+      const myChart = d3
+        .select('#my-svg-chart')
+        .append('svg')
+        .attr('width', 640)
+        .attr('height', 640);
+
+      // Step 6. Aggiungi un titolo nel grafico SVG
+      myChart.append('text')
+        .attr('x', 320)
+        .attr('y', 40)
+        .attr('text-anchor', 'middle')
+        .text('Net Worth Comparison: Bezos vs. Average American')
+        .style('font-size', '18px')
+        .style('font-family', 'sans-serif')
+        .style('font-weight', 'bold');
+
+      // Step 7. Dati per i cerchi (patrimoni)
+      const circleData = [bezosWealth, averageWealth];
+
+      // Step 8. Disegna i cerchi
+      myChart
+        .selectAll('circle')
+        .data(circleData)
+        .join('circle')
+        .attr('cx', (d, i) => 150 + i * 250)
+        .attr('cy', 300)
+        .attr('r', d => Math.max(scaleRadius(d), 5))  // minimo 5px
+        .style('fill', (d, i) => i % 2 === 0 ? 'tomato' : '#ccc');
+
+      // Etichette sotto ai cerchi
+      const labels = ['Jeff Bezos', 'Average American'];
+
+      myChart
+        .selectAll('text.label')
+        .data(labels)
+        .join('text')
+        .attr('class', 'label')
+        .attr('x', (d, i) => 150 + i * 250)
+        .attr('y', 470)
+        .attr('text-anchor', 'middle')
+        .text(d => d)
+        .style('font-family', 'sans-serif')
+        .style('font-size', '16px');
+    </script>
+
+  </body>
+</html>
